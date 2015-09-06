@@ -21,7 +21,7 @@ $dbh = connectDb();
 $users = array();
 $posts = array();
 
-// ユーザー一覧を最新順で取得
+// ユーザー一覧を最新順で全件取得（fetchをforeachで取得している）
 $sql = "select * from users order by created desc";
 foreach ($dbh->query($sql) as $row) {
 	array_push($users, $row);
@@ -52,13 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	$error = array();
 
 	// エラー処理
-	// if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-	// 	$error['email'] = "メールアドレスの形式が正しくありません";
-	// }
-	// if ($email == '') {
-	// 	$error['email'] = 'メールアドレスを入力してください';
-	// }
-
 	if ($body == '') {
 		$error['body'] = '内容を入力してくださいな';
 	}
@@ -67,22 +60,11 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 		
 		// DBに格納
 		$dbh = connectDb();
-
-		// $sql = "insert into entries
-		// 	   (name, email, memo, created, modified)
-		// 	   values
-		// 	   (:name, :email, :memo, now(), now())";
 		
 		$sql = "insert into posts
 			   (user_id, body, created, modified)
 			   values
 			   (:user_id, :body, now(), now())";
-
-		// ユーザーIDを保存するSQL
-		// $sql = "insert into posts
-		// 		(user_id, body, stamp) 
-		// 		values
-		// 		($userid, '". mysql_real_escape_string($body). "',now())";
 
 		$stmt = $dbh->prepare($sql);
 
@@ -107,7 +89,6 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 <html lang="ja">
 	<head>
 		<meta charset="utf-8">
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<title>ホーム画面</title>
 	</head>
@@ -147,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 			<ul>
 				<?php foreach ($users as $user) : ?>
 					<li>
-						<a href="profile.php?id=<?php echo h($user['id']); ?>">
+						<a href="view.php?id=<?php echo h($user['id']); ?>">
 							<?php echo h($user['user_name']); ?>さん
 						</a>
 					</li>
