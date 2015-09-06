@@ -17,12 +17,16 @@ create table posts (
 	id int primary key auto_increment not null,
 	user_id int not null,
 	body varchar(255),
-	created datetime
+	created datetime,
+	modified datetime
 );
 
 
-create table followings (
-	user_id int not null,
-	following_id int not null,
-	primary key (`user_id`, `following_id`)
+create table relationships (
+	id int not null auto_increment,
+	follower_id int not null,
+	followed_id int not null,
+	created datetime,
+	modified datetime,
+	primary key (`id`, `follower_id`, `followed_id`)
 );

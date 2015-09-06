@@ -1,0 +1,36 @@
+.error {
+	color: red;
+	font-weight: bold;
+}
+
+.japan_blue {
+	background-color: #007bbb;
+}
+
+.white_font {
+	color: white;
+}
+
+/*.left {
+	float: left;
+}
+
+.right {
+	float: right;
+}*/
+
+/*.list_none {
+	list-style-type: none;
+}
+*/
+
+.delete_link {
+	cursor: pointer;
+}
+
+
+
+a:link { color: white; }
+a:visited { color: white; }
+a:hover { color: white; }
+a:active { color: white; }

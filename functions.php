@@ -33,3 +33,9 @@ function checkToken() {
 		exit;
 	}
 }
+
+
+
+function getSha1Password($input_password) {
+	return (sha1($input_password));
+}
