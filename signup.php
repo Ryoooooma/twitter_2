@@ -20,8 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	// データを扱いやすくするために、フォームからポストされた内容を各変数に突っ込んでおく
 	$user_name = $_POST['user_name'];
 	$password = $_POST['password'];
+	$email = $_POST['email'];
 
-	// そのあとDBに接続する
+
+	// そのあとDB接続した値を＄dbhにぶっこんでいる
 	$dbh = connectDb();
 
 	// 以下エラー処理を記載
@@ -32,6 +34,20 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	if ($user_name == '') {
 		$error['user_name'] = '名前を入力してください';
 	}
+
+	if (emailExists($email, $dbh)) {
+		$error['email'] = 'このメールアドレスは既に登録されています。';
+	}
+
+	//メールアドレスが正しい記述かどうか 
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		$error['email'] = "メールアドレスの形式が正しくありません";
+	}
+
+	// メールアドレスが空かどうかチェック
+	if ($email == '') {
+		$error['email'] = 'メールアドレスを入力してください';
+	}
 	
 	// パスワードが空かどうかチェック
 	if ($password == '') {
@@ -41,12 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	// 上記のエラーチェックをパスしたら登録処理を実行する
 	if (empty($error)) {
 		$sql = "insert into users
-				(user_name, password, created, modified)
+				(user_name, email, password, created, modified)
 				values
-				(:user_name, :password, now(), now())";
+				(:user_name, :email, :password, now(), now())";
 		$stmt = $dbh->prepare($sql);
 		$params = array(
 			":user_name" => $user_name,
+			":email" => $email,
 			":password" => getSha1Password($password)
 		);
 		$stmt->execute($params);
@@ -69,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	<body class="japan_blue white_font">
 		<h1>一旦登録してみて</h1>
 		<p> ---以下フォームにご入力ください--- </p>
-		<form action="" method="POST">
+		<form action="mail.php" method="POST">
 
 			<p>
 				お名前：
@@ -78,7 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 					<?php echo $error['user_name']; ?>
 				</span>
 			</p>
-
+			<p>
+				メールアドレス：
+				<input type="text" name="email" value="<?php echo h($email); ?>"> 
+				<span class="error">
+					<?php echo $error['email']; ?>
+				</span>
+			</p>
 			<p>
 				パスワード：
 				<input type="password" name="password" value=""> 

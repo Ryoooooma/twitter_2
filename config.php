@@ -1,7 +1,12 @@
 <?php
 
+// Data Souce Name の略で、DB接続時の第一引数に必要となる（ポート番号の指定も可能）
 define('DSN', 'mysql:host=localhost;dbname=twitter_2');
+
+// DB接続時の第二引数に必要となる
 define('DB_USER', 'root');
+
+// DB接続時の第三引数に必要となる
 define('DB_PASSWORD', 'root');
 
 // 相対バス、絶対パスどちらで指定しているかを認識していくこと。

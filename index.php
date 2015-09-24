@@ -14,7 +14,7 @@ if (empty($_SESSION['me'])) {
 // ログイン情報を変数meに突っ込む
 $me = $_SESSION['me'];
 
-// DBに接続
+// DB接続した値を＄dbhにぶっこんでいる
 $dbh = connectDb();
 
 // 変数usersに配列型で初期化
@@ -23,12 +23,14 @@ $posts = array();
 
 // ユーザー一覧を最新順で全件取得（fetchをforeachで取得している）
 $sql = "select * from users order by created desc";
+// query（クエリー）メソッドでSQL文を実行している → 返り値はPDOStatementオブジェクトでこのオブジェクト内に結果が保持されている
 foreach ($dbh->query($sql) as $row) {
 	array_push($users, $row);
 }
 
-// つぶやき一覧を最新順で取得
+// つぶやき一覧を最新順で全件取得
 $sql = "select * from posts order by created desc";
+// query（クエリー）メソッドでSQL文を実行している → 返り値はPDOStatementオブジェクトでこのオブジェクト内に結果が保持されている
 foreach ($dbh->query($sql) as $row) {
 	array_push($posts, $row);
 }
@@ -58,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 
 	if (empty($error)) {
 		
-		// DBに格納
+    	// DB接続した値を＄dbhにぶっこんでいる
 		$dbh = connectDb();
 		
 		$sql = "insert into posts
@@ -81,8 +83,6 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	}
 }
 
-
-
 ?>
 
 <!DOCTYPE html>
@@ -93,6 +93,21 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 		<title>ホーム画面</title>
 	</head>
 	<body class="japan_blue white_font">
+
+			<?php var_dump($results); ?>
+			<!-- 検索フォーム -->
+			<form action="search.php" name="search" method="POST">
+				<p>
+					つぶやきを検索する方はこちら！
+				</p>
+				<p>
+					<input type="text" name="body" value="">
+				</p>
+				<p>
+					<input type="submit" value="送信">
+				</p>
+			</form>
+
 			<p>「
 				<strong>
 					<?php echo $me['user_name']; ?>

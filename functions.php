@@ -1,5 +1,6 @@
 <?php
 
+// PDOオブジェクト取得時（DB接続時）に失敗した場合、PDOExceptionというエラーを出すため、try　catchで例外処理をしている
 function connectDb() {
 	try {
 		return new PDO(DSN, DB_USER, DB_PASSWORD);
@@ -38,4 +39,13 @@ function checkToken() {
 
 function getSha1Password($input_password) {
 	return (sha1($input_password));
+}
+
+
+function emailExists($email, $dbh) {
+	$sql = "select * from users where email = :email limit 1";
+	$stmt = $dbh->prepare($sql);
+	$stmt->execute(array(":email" => $email));
+	$user = $stmt->fetch();
+	return $user ? true : false;
 }

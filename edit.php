@@ -5,7 +5,7 @@ session_start();
 require_once('config.php');
 require_once('functions.php');
 
-// DBに接続
+// DB接続した値を＄dbhにぶっこんでいる
 $dbh = connectDb();
 
 if (preg_match('/^[1-9][0-9]*$/', $_GET['id'])) {
@@ -23,6 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 
 	$stmt = $dbh->prepare("select * from posts where id = :id limit 1");
 	$stmt->execute(array(":id" => $id));
+	// 返り値のPDOオブジェクトに対してfetchメソッドを実行し、結果セットを配列で取得している
 	$post = $stmt->fetch() or die("no one found!");
 	$body = $post['body'];
 

@@ -13,6 +13,7 @@ function getUser($user_name, $password, $dbh) {
 	$sql = "select * from users where user_name = :user_name and password = :password limit 1";
 	$stmt = $dbh->prepare($sql);
 	$stmt->execute(array(":user_name"=>$user_name, ":password"=>getSha1Password($password)));
+	// 返り値のPDOオブジェクトに対してfetchメソッドを実行し、結果セットを配列で取得している
 	$user = $stmt->fetch();
 	return $user ? $user : false;
 }
@@ -29,6 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	$user_name = $_POST['user_name'];
 	$password = $_POST['password'];
 
+
+	// DB接続した値を＄dbhにぶっこんでいる
 	$dbh = connectDb();
 
 	$error = array();
@@ -44,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] != "POST") {
 	}
 
 	if (!$me) {
-		$error['password'] = 'パスワードとメールアドレスが正しくありません。';
+		$error['password'] = 'お名前とパスワードが正しくありません。';
 	}
 
 	// パスワードが空

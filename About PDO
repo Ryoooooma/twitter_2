@@ -1,0 +1,86 @@
+About PDO
+
+【SQLの結果セットから値を取得する方法】
+
+1　fetch()メソッド　単一の行を取得する
+→ 結果が1行しかないとわかっている場合、whileを使って1行ずつ取得する際によく使う。
+
+以下例（単一行を取得する場合）
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+$row = $stmt->fetch();
+echo $row['id'];
+
+以下例（複数行を取得する場合）
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+while ($row = $stmt->fetch()) {
+	echo $row['id'];
+}
+
+
+2　fetchAll()メソッド　結果セットに含まれるすべての行を配列で取得する
+→ 結果が複数行にわたる場合に、結果をまとめて取得した場合によく使う。
+
+以下例（複数行をまとめて取得する場合）
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+$results = $stmt->fetchAll();
+foreach ($results as $result) {
+	echo $result['id']; 
+}
+
+※ なおfetchメソッドで取得した際にカラム名をキーにして値を保持している他に
+　 インデックスでも値を保持しています。
+
+なのでfetch()メソッドの第一引数にfetchモードと呼ばれるパラメータを指定することが可能
+
+以下がその内容。
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+→ カラム名をキーにして値を取得
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+$row = $stmt->fetch(PDO::FETCH_NUM);
+→ インデックスをキーにして値を取得
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->query($sql);
+$row = $stmt->fetch(PDO::FETCH_BOTH);
+→ 上記両方を兼ね備えたモード
+
+
+
+PDOはプリペアドステートメントを扱うことができる
+
+まずはPDOのprepare()メソッドにSQL文を渡してあげる。
+その際に「？プレースホルダ」「：ではじまる名前付きプレースホルダ(:name)」が利用可能
+prepare()の返り値としてPDOStatementオブジェクトを受け取る
+このオブジェクトに対してexecute()メソッドを実行することで結果セットが格納される
+プレースホルダを利用している場合は、execute()メソッドの引数に配列でパラメータを指定する
+
+以下がその内容。
+
+$dbh = connectDb();
+$sql = "select id from users where email = 'ryoma@gmail.com' limit 1";
+$stmt = $dbh->prepare($sql);
+$stmt->execute(array('パーフェクトPHP'));
+$book = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$sql = "select id from users where id = :id";
+$stmt = $dbh->prepare($sql);
+$stmt->execute(array(":id" => $id));
+$book = $stmt->fetch(PDO::FETCH_ASSOC);
+
+

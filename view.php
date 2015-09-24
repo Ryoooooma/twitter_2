@@ -5,6 +5,7 @@ session_start();
 require_once('config.php');
 require_once('functions.php');
 
+// DB接続した値を＄dbhにぶっこんでいる
 $dbh = connectDb();
 
 // 正規表現でIDチェックをしている。そのうえでクリック（get）されたidを変数idに突っ込んでいる
@@ -18,6 +19,7 @@ if (preg_match('/^[1-9][0-9]*$/', $_GET['id'])) {
 // クリックされたユーザー情報を1件取得
 $stmt = $dbh->prepare("select * from users where id = :id limit 1");
 $stmt->execute(array(":id" => $id));
+// 返り値のPDOオブジェクトに対してfetchメソッドを実行し、結果セットを配列で取得している
 $clicked_user = $stmt->fetch() or die("ユーザーを取得できません");
 // var_dump($clicked_user);
 
@@ -25,6 +27,7 @@ $clicked_user = $stmt->fetch() or die("ユーザーを取得できません");
 // クリックされたユーザーのつぶやきを全件取得（現状とれていない）
 $stmt = $dbh->prepare("select * from posts where user_id = :id");
 $stmt->execute(array(":id" => $id));
+// 返り値のPDOオブジェクトに対してfetchメソッドを実行し、結果セットを配列で取得している
 $clicked_users_posts = $stmt->fetch();
 // $dbh = connectDb();
 // $clicked_user_posts = array();
@@ -42,6 +45,7 @@ $clicked_users_posts = $stmt->fetch();
 
 
 // 以下（フォロー関係を作るために）、relationshipsテーブルにデータをinsertするためのSQL
+// DB接続した値を＄dbhにぶっこんでいる
 $dbh = connectDb();
 
 $sql = "insert into relationships

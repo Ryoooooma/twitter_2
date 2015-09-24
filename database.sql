@@ -30,3 +30,6 @@ create table relationships (
 	modified datetime,
 	primary key (`id`, `follower_id`, `followed_id`)
 );
+
+alter table users drop email;
+alter table users add email varchar(255) not null after user_name;
